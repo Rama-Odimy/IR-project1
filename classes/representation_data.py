@@ -8,12 +8,22 @@ class DataRepresentation:
     def __init__(self, data_file):
         # Initializes the DataRepresentation object.
         # Args:
-            # data_file (str): Path to the CSV file containing processed text data.
+            # data_file (str): Path to the file containing cleaned text data (one document per line).
         self.data_file = data_file
-        self.df = pd.read_csv(data_file)
+        self.df = pd.DataFrame({'text': self.read_cleaned_text(data_file)})  # Read cleaned text
         self.vectorizer = TfidfVectorizer()  # Create a TfidfVectorizer instance
-        self.vsm = self.vectorizer.fit_transform(self.df['tokens'])  # Calculate VSM for the dataset
+        self.vsm = self.vectorizer.fit_transform(self.df['text'])  # Calculate VSM for the dataset
         self.vocabulary = self.vectorizer.get_feature_names_out()  # Store the vocabulary
+
+    def read_cleaned_text(self, data_file):
+        # Reads cleaned text data from the file, assuming one document per line.
+        # Args:
+            # data_file (str): Path to the file containing cleaned text data.
+        # Returns:
+            # list: A list of cleaned text documents.
+        with open(data_file, 'r') as f:
+            cleaned_texts = f.readlines()
+        return [text.strip() for text in cleaned_texts]
 
     def create_vsm(self):
         # Creates a VSM (Vector Space Model) representation of the text data.
@@ -34,35 +44,20 @@ class DataRepresentation:
         return self.vocabulary
 
     def save_results(self, output_file):
-        # Saves the TF-IDF vectors and vocabulary to a binary file.
-        # Args:
-            # output_file (str): Path to the output file.
-
-        # Convert sparse matrix to dense array
-        tfidf_vectors_dense = self.get_tfidf_vectors().toarray()
-
-        # Save the data to a binary file using pickle
+        # Save the sparse matrix and vocabulary to a binary file
         with open(output_file, 'wb') as f:
-            pickle.dump((tfidf_vectors_dense, self.vocabulary), f)
+            pickle.dump((self.vsm, self.vocabulary), f)
 
     def load_results(self, input_file):
-        # Loads the TF-IDF vectors and vocabulary from a binary file.
-        # Args:
-            # input_file (str): Path to the input file.
-
         with open(input_file, 'rb') as f:
-            tfidf_vectors_dense, vocabulary = pickle.load(f)
+            self.vsm, self.vocabulary = pickle.load(f)
 
-        # Convert the dense array back to a sparse matrix
-        self.vsm = csr_matrix(tfidf_vectors_dense)
-        self.vocabulary = vocabulary
 
-# # Example usage:
-# data_rep = DataRepresentation('D:/ir_final_final_final_the_flinalest/data/antiqe_output/output_collection.tsv')
+# data_rep = DataRepresentation('D:/ir_final_final_final_the_flinalest/data/wiki_output/output_documents.tsv')  # Replace with the path to your cleaned file
 # data_rep.create_vsm()  # Calculate TF-IDF vectors
 
 # # Save the results to a binary file
-# data_rep.save_results('D:/ir_final_final_final_the_flinalest/data/antiqe_output/output_collection_tfidf_results.bin')
+# data_rep.save_results('D:/ir_final_final_final_the_flinalest/data/wiki_output/output_documents_tfidf_results.pkl')
 
 # # Load the results from the binary file
-# data_rep.load_results('D:/ir_final_final_final_the_flinalest/data/antiqe_output/output_collection_tfidf_results.bin')
+# data_rep.load_results('D:/ir_final_final_final_the_flinalest/data/wiki_output/output_documents_tfidf_results.pkl')

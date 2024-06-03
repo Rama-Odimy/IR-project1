@@ -56,7 +56,7 @@ class VSMChecker:
         return similarity[0][0]  # Extract the single similarity value
 
 # Example usage:
-checker = VSMChecker('antiqe_output/antiqe_output_tfidf_results.tsv', 'antiqe_output/query_tfidf_results.tsv')
+checker = VSMChecker('D:/ir_final_final_final_the_flinalest/data/antiqe_output/output_collection.tsv', 'D:/ir_final_final_final_the_flinalest/data/antiqe_output/query_tfidf_results.pkl')
 
 doc1_index = 0
 doc2_index = 0

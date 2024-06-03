@@ -11,9 +11,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 # from scipy import triu
 import pandas as pd
 
-import nltk
-nltk.download("stopwords")
-nltk.download('wordnet')
+# import nltk
+# nltk.download("stopwords")
+# nltk.download('wordnet')
 
 class TextProcessing:
     def __init__(self):
@@ -211,18 +211,21 @@ class TextProcessing:
     def process_text_file(self, input_file, output_file, processing_method='lemmatize'):
         # Processes a text file, applies text processing methods, and saves the output to a TSV file.
         # Args:
-            # input_file (str): Path to the input text file.
-            # output_file (str): Path to the output TSV file.
-            # processing_method (str, optional): The processing method to use, either 'stem' or 'lemmatize'. Defaults to 'stem'.
+        #     input_file (str): Path to the input text file.
+        #     output_file (str): Path to the output TSV file.
+        #     processing_method (str, optional): The processing method to use, either 'stem' or 'lemmatize'. Defaults to 'stem'.
         
-        with open(input_file, 'r') as f:
-            text = f.read()
-
-        df = self.process_text(text)
-
-        # Save to TSV file
-        df.to_csv(output_file, sep='\t', index=False)
+         with open(input_file, 'r') as f:
+            for line in f:
+                # Split the line based on the tab delimiter
+                # parts = line.strip().split(' ')
+                # if len(parts) == 2:  # Ensure there are two parts (ID and text)
+                #     document_id, text = parts
+                    df = self.process_text(line, processing_method=processing_method)
+                    # Save to TSV file (append mode)
+                    df.to_csv(output_file, sep=' ', index=False, mode='a', header=False)
 
 # processor = TextProcessing()
-# input_file = 'D:/ir_final_final_final_the_flinalest/resources/documents.tsv'
-# processor.process_text_file(input_file, 'output_documents.tsv', processing_method='lemmatize')
+# input_file = 'D:/ir_final_final_final_the_flinalest/resources/collection.tsv'
+# output_file = 'D:/ir_final_final_final_the_flinalest/data/antiqe_output/output_collection.tsv'
+# processor.process_text_file(input_file, output_file, processing_method='lemmatize')
